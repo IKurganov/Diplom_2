@@ -27,7 +27,7 @@ public class LoginRequestTest {
     @Test
     @DisplayName("Успешная авторизация под существующим юзером")
     @Description("Проверка авторизации под существующим юзером: возвращается код 200 и корректный текст")
-    public void testLoginUnderExistingUser() {
+    public void checkSuccessLoginWithExistingUser() {
         userPageObject = new UserPageObject();
         userRequest = getUserRequestAllRequiredField();
         userPageObject.create(userRequest);
@@ -46,7 +46,7 @@ public class LoginRequestTest {
     @Test
     @DisplayName("Попытка авторизации под несуществующим юзером")
     @Description("Проверка ошибки при попытке авторизоваться с некорректными данными")
-    public void testLoginWithInvalidUsernameAndPassword() {
+    public void checkFailureLoginWithInvalidData() {
         LoginRequest loginRequest = LoginRequestTestData.invalidLoginPassword();
         userPageObject = new UserPageObject();
         Response response = userPageObject.login(loginRequest);

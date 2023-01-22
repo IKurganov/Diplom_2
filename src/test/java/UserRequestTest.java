@@ -26,7 +26,7 @@ public class UserRequestTest {
     @Test
     @DisplayName("Успешная регистрация пользователя")
     @Description("Проверка успешной регистрации пользователя")
-    public void testCreateUser() {
+    public void checkSuccessCreateUser() {
         userPageObject = new UserPageObject();
         userRequest = getUserRequestAllRequiredField();
         accessToken = userPageObject.create(userRequest)
@@ -43,7 +43,7 @@ public class UserRequestTest {
     @Test
     @DisplayName("Попытка регистрации уже зарегистрированного пользователя")
     @Description("Проверка запрета на регистрацию дублирующего пользователя")
-    public void testCreateDuplicateUser() {
+    public void checkFailureCreateDuplicateUser() {
         userPageObject = new UserPageObject();
         userRequest = getUserRequestAllRequiredField();
         accessToken = userPageObject.create(userRequest)
@@ -66,7 +66,7 @@ public class UserRequestTest {
     @Test
     @DisplayName("Создание пользователя и незаполнение одного из обязательных полей")
     @Description("Проверка запрета регистрации пользователя при условии незаполнения необходимого поля")
-    public void testCreateUserWithoutRequiredField() {
+    public void checkFailureCreateUserWithoutRequiredFields() {
         userPageObject = new UserPageObject();
         userRequest = getUserRequestWithoutRequiredField();
         Response response = userPageObject.create(userRequest);

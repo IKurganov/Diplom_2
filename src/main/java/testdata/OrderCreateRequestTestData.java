@@ -1,13 +1,14 @@
 package testdata;
 
 import io.qameta.allure.Step;
+import org.apache.commons.lang3.RandomStringUtils;
 import pojo.OrderCreateRequest;
 
 public class OrderCreateRequestTestData {
-    @Step("Создание заказа с корректными ингредиентами")
-    public static OrderCreateRequest getOrderWithIngredients() {
+    @Step("Создание заказа с ингредиентами")
+    public static OrderCreateRequest getOrderWithIngredients(String[] ingredients) {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
-        orderCreateRequest.setIngredients(new String[]{"61c0c5a71d1f82001bdaaa72", "61c0c5a71d1f82001bdaaa74", "61c0c5a71d1f82001bdaaa6c"});
+        orderCreateRequest.setIngredients(ingredients);
         return orderCreateRequest;
     }
 
@@ -18,10 +19,10 @@ public class OrderCreateRequestTestData {
         return orderCreateRequest;
     }
 
-    @Step("Создание заказа с некорректными ингредиентами")
+    @Step("Создание заказа с некорректными ингредиентами - рандомными значениями")
     public static OrderCreateRequest getOrderWithIncorrectIngredients() {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest();
-        orderCreateRequest.setIngredients(new String[]{"Incorrect61c0c5a71d1f82001bdaaa72", "Incorrect61c0c5a71d1f82001bdaaa74", "Incorrect61c0c5a71d1f82001bdaaa6c"});
+        orderCreateRequest.setIngredients(new String[]{"Incorrect-" + RandomStringUtils.randomAlphabetic(23), "Incorrect-" + RandomStringUtils.randomNumeric(25)});
         return orderCreateRequest;
     }
 }

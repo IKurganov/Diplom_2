@@ -2,6 +2,8 @@ import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import pageobject.UserPageObject;
 import pojo.UpdateUserRequest;
@@ -15,22 +17,13 @@ import static testdata.UpdateUserRequestTestData.getUserRequestAllUpdateRequired
 import static testdata.UserRequestTestData.getUserRequestAllRequiredField;
 
 public class UpdateUserRequestTest {
-    UserPageObject userPageObject;
-    UserRequest userRequest;
-    String accessToken;
     UpdateUserRequest updateUserRequest;
+    static UserPageObject userPageObject;
+    static UserRequest userRequest;
+    static String accessToken;
 
-    @After
-    public void deleteUser() {
-        if (accessToken != null) {
-            userPageObject.delete(accessToken);
-        }
-    }
-
-    @Test
-    @DisplayName("Успешное изменение данных юзера с авторизацией")
-    @Description("Проверка изменения данных юзера с авторизацией: запрос вернёт код 200")
-    public void testUpdateUserWithAuth() {
+    @BeforeClass
+    public static void createTestUser() {
         userPageObject = new UserPageObject();
         userRequest = getUserRequestAllRequiredField();
         accessToken = userPageObject.create(userRequest)
@@ -41,7 +34,19 @@ public class UpdateUserRequestTest {
                 .body("accessToken", notNullValue())
                 .extract()
                 .path("accessToken");
+    }
 
+    @AfterClass
+    public static void deleteUser() {
+        if (accessToken != null) {
+            userPageObject.delete(accessToken);
+        }
+    }
+
+    @Test
+    @DisplayName("Успешное изменение данных юзера с авторизацией")
+    @Description("Проверка изменения данных юзера с авторизацией: запрос вернёт код 200")
+    public void checkSuccessUpdateUserDataWithAuth() {
         updateUserRequest = getUserRequestAllUpdateRequiredField();
         Response response = userPageObject.updateWithAuth(updateUserRequest, accessToken);
         response.then()
@@ -53,7 +58,7 @@ public class UpdateUserRequestTest {
     @Test
     @DisplayName("Проверка запрета на изменение данных юзера без авторизации")
     @Description("Проверка 401 ошибки при попытке изменить данные без авторизации")
-    public void testUpdateUserWithoutAuth() {
+    public void checkFailureUpdateUserDataWithoutAuth() {
         updateUserRequest = getUserRequestAllUpdateRequiredField();
         Response response =
                 given()

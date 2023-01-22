@@ -2,6 +2,8 @@ import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import pageobject.OrderPageObject;
 import pageobject.UserPageObject;
@@ -12,21 +14,12 @@ import static org.hamcrest.Matchers.notNullValue;
 import static testdata.UserRequestTestData.getUserRequestAllRequiredField;
 
 public class ListOrdersRequestTest {
-    UserPageObject userPageObject;
-    UserRequest userRequest;
-    String accessToken;
+    static UserPageObject userPageObject;
+    static UserRequest userRequest;
+    static String accessToken;
 
-    @After
-    public void deleteUser() {
-        if (accessToken != null) {
-            userPageObject.delete(accessToken);
-        }
-    }
-
-    @Test
-    @DisplayName("Получение списка заказов авторизованным пользователем")
-    @Description("проверка получения списка заказов в теле ответа авторизованным юзером и того, что запрос возвращает код 200")
-    public void testGetListOrderWithAuth() {
+    @BeforeClass
+    public static void createTestUser() {
         userPageObject = new UserPageObject();
         userRequest = getUserRequestAllRequiredField();
         accessToken = userPageObject.create(userRequest)
@@ -37,7 +30,19 @@ public class ListOrdersRequestTest {
                 .body("accessToken", notNullValue())
                 .extract()
                 .path("accessToken");
+    }
 
+    @AfterClass
+    public static void deleteUser() {
+        if (accessToken != null) {
+            userPageObject.delete(accessToken);
+        }
+    }
+
+    @Test
+    @DisplayName("Получение списка заказов авторизованным пользователем")
+    @Description("Проверка получения списка заказов в теле ответа авторизованным юзером и того, что запрос возвращает код 200")
+    public void checkSuccessGettingOrdersListWithAuth() {
         OrderPageObject orderPageObject = new OrderPageObject();
         Response response = orderPageObject.getOrdersUserWithAuth(accessToken);
         response.then().statusCode(200)
@@ -48,7 +53,7 @@ public class ListOrdersRequestTest {
     @Test
     @DisplayName("Получение списка заказов без авторизации")
     @Description("Проверка получения заказов неавторизованным пользователем: запрос возвращает 401, а ещё корректный текст ошибки")
-    public void testGetListOrderWithoutAuth() {
+    public void checkFailureGettingOrdersListWithoutAuth() {
         OrderPageObject orderPageObject = new OrderPageObject();
         Response response = orderPageObject.getOrdersUserWithoutAuth();
         response.then().statusCode(401)
